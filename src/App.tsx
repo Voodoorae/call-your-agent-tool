@@ -29,16 +29,38 @@ const App: React.FC = () => {
       setIsLoading(false);
     }, 800);
   }, [taskHours, hourlyRate]);
-
-  const handleEmailSubmit = useCallback(async (email: string) => {
+]
+   const handleEmailSubmit = useCallback(async (email: string) => {
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      // 1. Send the data to GoHighLevel
+      // REPLACE THE URL BELOW WITH YOUR ACTUAL GHL WEBHOOK
+      const webhookUrl = "https://services.leadconnectorhq.com/hooks/8I4dcdbVv5h8XxnqQ9Cg/webhook-trigger/b00d0d9c-2881-46fd-8dc9-ebbf0d4dfa2f"; 
+      
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          source: "Call Your Agent Calculator",
+          date: new Date().toISOString()
+        }),
+        mode: "no-cors" // keeps the browser happy
+      });
+
+      // 2. Unlock the report regardless of the result
       setIsUnlocked(true);
       setShowGate(false);
+
+    } catch (error) {
+      console.error("Webhook failed", error);
+      // Still unlock the report so the user isn't punished
+      setIsUnlocked(true);
+      setShowGate(false);
+    } finally {
       setIsLoading(false);
-      console.log('Email captured:', email);
-    }, 1200);
+    }
   }, []);
 
   const { totalHours, annualLoss } = calculateTotalStats(taskHours, hourlyRate);
