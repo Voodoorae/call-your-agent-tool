@@ -29,14 +29,11 @@ const App: React.FC = () => {
       setIsLoading(false);
     }, 800);
   }, [taskHours, hourlyRate]);
-  
-   const handleEmailSubmit = useCallback(async (email: string) => {
+ // This starts cleanly on the new line
+  const handleEmailSubmit = useCallback(async (email: string) => {
     setIsLoading(true);
-
     try {
-      // 1. Send the data to GoHighLevel
-      // REPLACE THE URL BELOW WITH YOUR ACTUAL GHL WEBHOOK
-      const webhookUrl = "https://services.leadconnectorhq.com/hooks/8I4dcdbVv5h8XxnqQ9Cg/webhook-trigger/b00d0d9c-2881-46fd-8dc9-ebbf0d4dfa2f"; 
+      const webhookUrl = "https://services.leadconnectorhq.com/hooks/8I4dcdbVv5h8XxnqQ9Cg/webhook-trigger/b00d0d9c-2881-46fd-8dc9-ebbf0d4dfa2fE"; // <--- DOUBLE CHECK THIS!
       
       await fetch(webhookUrl, {
         method: "POST",
@@ -46,32 +43,19 @@ const App: React.FC = () => {
           source: "Call Your Agent Calculator",
           date: new Date().toISOString()
         }),
-        mode: "no-cors" // keeps the browser happy
+        mode: "no-cors"
       });
 
-      // 2. Unlock the report regardless of the result
       setIsUnlocked(true);
       setShowGate(false);
-
     } catch (error) {
       console.error("Webhook failed", error);
-      // Still unlock the report so the user isn't punished
       setIsUnlocked(true);
       setShowGate(false);
     } finally {
       setIsLoading(false);
     }
   }, []);
-
-  const { totalHours, annualLoss } = calculateTotalStats(taskHours, hourlyRate);
-
-  const handleReset = () => {
-    setTaskHours({});
-    setSuggestions(null);
-    setAgentImpact(null);
-    setShowGate(false);
-    setIsUnlocked(false);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
