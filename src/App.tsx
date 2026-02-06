@@ -29,7 +29,7 @@ const App: React.FC = () => {
       setIsLoading(false);
     }, 800);
   }, [taskHours, hourlyRate]);
-
+  
    const handleEmailSubmit = useCallback(async (email: string) => {
     setIsLoading(true);
 
